@@ -2,7 +2,7 @@
 
 ### Project Architecture Overview
 
-This project outlines the architecture of our automated deployment and monitoring system using AWS services. The setup is designed to efficiently manage infrastructure, deploy applications, and provide comprehensive monitoring and scaling capabilities.
+This project outlines the architecture of our automated deployment and monitoring system using AWS services and 3rd party solutions. The setup is designed to efficiently manage infrastructure, deploy applications, and provide comprehensive monitoring and scaling capabilities.
 This project includes:
 - [CDK v2 Java Project for EKS cluster](./cdk-eks)
 - [Fortune Cookie Backend application (Spring Boot/Java)](./fortune-cookie-backend)
@@ -12,22 +12,24 @@ This project includes:
 
 ### 1. Infrastructure Provisioning
 
-* AWS CDK: I utilize AWS Cloud Development Kit (CDK) v2 with Java to define and provision our infrastructure. This includes:
-    * Amazon EKS Cluster: A managed Kubernetes service that hosts our applications.
-    * Managed Node Groups: EC2 instances that serve as worker nodes for running applications and services.
-    * Monitoring Tools:
-        * Prometheus and Grafana for metrics.
-        * CloudWatch Agent and Fluent-bit for logging.
-    * Cluster Management:
-        * Cluster Autoscaler, Karpenter for dynamic node scaling.
+* AWS CDK: I utilized AWS Cloud Development Kit (CDK) v2 with Java to define and provisioned the infrastructure. The EKS cluster was fully bootstrapped with operational software that is needed to deploy and operate workloads.
+  This includes:
+    * A new Well-Architected VPC with both Public and Private subnets.
+    * **Amazon EKS Cluster**: A managed Kubernetes service that hosts our applications.
+    * **Managed Node Groups**: EC2 instances that serve as worker nodes for running applications and services.
+    * **Cluster Management**:
+        * [Cluster Autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler), [Karpenter](https://karpenter.sh/) for dynamic node scaling, automatically adjusts the size of a Kubernetes Cluster so that all pods have a place to run.
         * KubeCost for cost management.
-        * AWS Load Balancer Controller for exposing services/ingresses.
-    * System Add-Ons
+        * AWS Load Balancer Controller for exposing services/ingresses.      
+    * **System Add-Ons**
         * VPC CNI Plugin
         * Kube-proxy
         * CoreDNS
         * EBS CSI Driver/ EFS CSI Driver
         * Kubernetes Metrics server
+    * **Monitoring/Logging Tools**:
+        * Prometheus and Grafana for metrics.
+        * CloudWatch Agent and Fluent-bit for logging.
 
 ![](./doc/pod-all.png)
 
@@ -35,7 +37,7 @@ This project includes:
 
 * Source Code Management:
     * Developers push code to CodeCommit, which acts as the central repository.
-    * DevOps teams use AWS CDK to define infrastructure as code, pushing updates to CodeCommit as well.
+    * DevOps Engineers use AWS CDK to define infrastructure as code, pushing updates to CodeCommit as well.
 * CI/CD Pipeline:
     * CodePipeline automates the build and deployment process.
     * CodeBuild compiles and tests the backend (Java/Spring Boot) and frontend (React) applications, along with infrastructure changes.
@@ -46,15 +48,14 @@ This project includes:
 ### 3. Application Deployment
 
 * Backend and Frontend Applications:
-    * Backend (Spring Boot) and Frontend (React) applications are deployed on the EKS cluster.
+    * Backend (Spring Boot) and Frontend (React) applications are deployed on the EKS cluster through Kubernetes manifest files.
+    * Backend application connects to MongoDB to store data.
     * Elastic Load Balancers (ALB and NLB): Manage incoming traffic and route it to the appropriate services.
-
 
 
 ### 4. Persistent Storage
 
 * EBS and EFS CSI Drivers in EKS cluster: Enable persistent storage solutions for applications, using Elastic Block Store (EBS) and Elastic File System (EFS).
-
 
 
 ### 5. Monitoring and Logging
@@ -79,18 +80,17 @@ This project includes:
 ### 6. Auto Scaling and Cost Management
 
 * Cluster Autoscaler: Automatically adjusts the size of a Kubernetes Cluster so that all pods have a place to run and there are no unneeded nodes.
-
-
-* KubeCost: Provides insights into Kubernetes resource costs and utilization.
+* [KubeCost](https://www.kubecost.com/): Provides insights into Kubernetes resource costs and utilization.
 
 
 
 ### 7. Networking
 
-* CoreDNS and AWS Load Balancer Controller: Manage DNS and load balancing within the cluster.
 * Virtual Private Cloud (VPC): Ensures secure networking for our EKS cluster and its components.
-* VPC CNI Plugin:
-* Kube proxy
+* AWS Load Balancer Controller: Provisions the load balancer and required resources within the cluster.
+* VPC CNI Plugin: Supports native VPC networking for Amazon EKS.
+* Kube proxy: Maintains network rules on each Amazon EC2 node.
+* [CoreDNS](https://coredns.io/): CoreDns is a flexible, extensible DNS server that can serve as the Kubernetes cluster DNS.
 
 
 
