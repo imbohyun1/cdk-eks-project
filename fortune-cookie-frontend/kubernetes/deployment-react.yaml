@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fortune-cookie-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fortune-cookie-frontend
+  template:
+    metadata:
+      labels:
+        app: fortune-cookie-frontend
+    spec:
+      containers:
+        - name: fortune-cookie-frontend
+          image: $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/fortunecookie/frontend:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REACT_APP_API_URL
+              value: "http://k8s-default-fortunec-6a39d6e7f7-xxxxxxx.us-east-1.elb.amazonaws.com"  # "http://fortune-cookie-backend:8080"
