@@ -142,7 +142,7 @@ public class FortuneController {
 
             return ResponseEntity.ok(randomFortune);
         } catch (Exception e) {
-            // 예외 발생 시 500 Internal Server Error 반환
+            // Return 500 Internal Server Error
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new Fortune("An error occurred while fetching a random fortune."));
         }
@@ -164,20 +164,19 @@ public class FortuneController {
         }
     }
 
-
     @GetMapping("/count")
     public long getFortuneCount() {
         return fortuneRepository.count();
     }
 
-
+    // Store the messages by reading file.
     @PostMapping("/bulkupdate")
     @Transactional
     public ResponseEntity<String> storeFortuneMessages() {
         try {
 
             MessageReader messageReader = new MessageReader();
-            List<String> messages = messageReader.readMessages("/Users/libohyun/dev/cdk-project/fortunecookie/src/main/resources/templates/messages.txt");
+            List<String> messages = messageReader.readMessages("../../resources/templates/messages.txt");
 
             List<Fortune> fortunes = messages.stream()
                     .map(Fortune::new)
