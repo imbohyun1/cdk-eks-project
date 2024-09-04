@@ -1,0 +1,20 @@
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: default
+spec:
+  requirements:
+    - key: "node.kubernetes.io/instance-type"
+      operator: In
+      values: [ "m5.large", "m5.xlarge" ]
+    - key: "topology.kubernetes.io/zone"
+      operator: In
+      values: [ "us-west-2a", "us-west-2b" ]
+  limits:
+    resources:
+      cpu: "1000"
+      memory: "500Gi"
+  provider:
+    amiFamily: AL2
+    instanceProfile: "KarpenterNodeInstanceProfile"
+  ttlSecondsAfterEmpty: 30

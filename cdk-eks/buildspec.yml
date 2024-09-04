@@ -1,0 +1,18 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+    commands:
+      - npm install -g aws-cdk
+  pre_build:
+    commands:
+      - echo "Installing Maven dependencies"
+      - mvn clean install
+  build:
+    commands:
+      - echo "Building and deploying EKS cluster via CDK"
+      - cdk deploy --all --require-approval never
+artifacts:
+  files: '**/*'
