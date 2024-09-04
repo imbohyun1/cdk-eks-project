@@ -29,9 +29,9 @@ public class RootController {
     @GetMapping("/health")
     public ResponseEntity<String> healthCheck() {
         try {
-            // 데이터베이스 연결 확인을 위해 간단한 쿼리 실행
+            // Simple query for checking DB connection.
             fortuneRepository.count();
-            logger.info("--> Database connection is healthy");
+            // logger.info("--> Database connection is healthy");
             return ResponseEntity.ok("Healthy");
         } catch (Exception e) {
             logger.error("--> Database connection is unhealthy", e);
