@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: fortune-cookie-backend-pdb
+spec:
+  minAvailable: 100%
+  selector:
+    matchLabels:
+      app: fortune-cookie-backend
+

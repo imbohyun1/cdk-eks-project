@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fortune-cookie-backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fortune-cookie-backend
+  template:
+    metadata:
+      labels:
+        app: fortune-cookie-backend
+    spec:
+      containers:
+      - name: fortune-cookie-backend
+        image: 219392389763.dkr.ecr.us-east-1.amazonaws.com/fortunecookie/backend:latest
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "128m"
+          limits:
+            memory: "512Mi"
+            cpu: "256m"
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          failureThreshold: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 50
+          failureThreshold: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          periodSeconds: 10
+        ports:
+        - containerPort: 8080
+        env:
+        - name: FRONTEND_URL
+          value: "http://10.*.*.*:3000,http://k8s-default-fortunec-2fc4addaeb-6c50e3ede492e697.elb.us-east-1.amazonaws.com,k8s-default-fortunec-6a39d6e7f7-280276801.us-east-1.elb.amazonaws.com"

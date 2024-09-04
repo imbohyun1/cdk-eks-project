@@ -1,0 +1,7 @@
+replicaCount: 2
+auth:
+  enabled: true
+  rootPassword: root123!
+  username: dev
+  password: dev123!
+  database: dev

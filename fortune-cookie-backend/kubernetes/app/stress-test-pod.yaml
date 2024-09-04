@@ -1,0 +1,5 @@
+kubectl run -i \
+--tty load-generator4 \
+--rm --image=busybox \
+--restart=Never \
+-- /bin/sh -c "while sleep 0.01; do wget -q -O- http://k8s-default-fortunec-6a39d6e7f7-280276801.us-east-1.elb.amazonaws.com/fortunes/random; done"
